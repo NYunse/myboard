@@ -167,13 +167,13 @@ app.post('/upload', upload.single('image'), function(req, res) {
     }
     res.status(200).send('이미지가 성공적으로 업로드되었습니다.');
 });
-// 서버 측의 코드 수정
-app.post('/update', upload.single('image'), async (req, res) => {
+app.post('/update', upload.fields([{ name: 'image', maxCount: 1 }, { name: 'document', maxCount: 1 }]), async (req, res) => {
     const postId = req.body._id; // 요청 본문에서 게시물 ID를 추출
     const newTitle = req.body.title; // 요청 본문에서 새로운 제목을 추출
     const newCaption = req.body.caption; // 요청 본문에서 새로운 설명을 추출
-    const newImage = req.file; // 업로드된 새로운 이미지 파일 추출
-    
+    const newImage = req.files['image'] ? req.files['image'][0] : null; // 업로드된 새로운 이미지 파일 추출
+    const newDocument = req.files['document'] ? req.files['document'][0] : null; // 업로드된 새로운 텍스트 파일 추출
+
     try {
         let updateData = {
             title: newTitle,
@@ -183,6 +183,14 @@ app.post('/update', upload.single('image'), async (req, res) => {
         // 새로운 이미지가 전송된 경우에만 이미지 데이터 저장
         if (newImage) {
             updateData.image = '/uploads/' + newImage.filename;
+        }
+
+        // 새로운 텍스트 파일이 전송된 경우에만 텍스트 파일 데이터 저장
+        if (newDocument) {
+            const filePath = path.join(__dirname, 'uploads', newDocument.filename); // 업로드된 텍스트 파일의 경로 설정
+            const documentContent = fs.readFileSync(filePath, 'utf8'); // 파일을 읽어서 내용을 변수에 저장
+            updateData.document = '/uploads/' + newDocument.filename; // 텍스트 파일 데이터 객체에 텍스트 파일 경로 저장
+            updateData.content = documentContent; // 텍스트 파일 데이터 객체에 텍스트 파일 내용 저장
         }
 
         // MongoDB에서 해당 ID의 게시물을 찾아 제목, 내용, 이미지를 업데이트
@@ -196,6 +204,7 @@ app.post('/update', upload.single('image'), async (req, res) => {
         res.status(500).send('게시물 수정에 실패했습니다.');
     }
 });
+
 
 app.get('/signup', (req, res) => {
     res.render('register');
