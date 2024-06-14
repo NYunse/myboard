@@ -137,11 +137,13 @@
                     success: function(result) {
                         postDiv.remove(); // 삭제된 게시물 컨테이너를 화면에서 제거
                         alert('게시물이 삭제되었습니다.'); // 삭제 성공 알림
+                        window.location.href = '/main' //처리 후 main이동
                     },
                     error: function(xhr, textStatus, errorThrown) {
                         console.log('Failed to delete post'); // 삭제 실패 시 에러 로그 출력
                         console.log(xhr, textStatus, errorThrown); // 에러 상세 정보 출력
                         alert('게시물 삭제에 실패했습니다.'); // 삭제 실패 알림
+                        window.location.href = '/main' //처리 후 main이동
                     }
                 });
             });
