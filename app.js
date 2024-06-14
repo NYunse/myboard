@@ -153,10 +153,9 @@ app.post('/deletemongo', async (req, res) => {
     try {
         // MongoDB에서 해당 ID의 게시물 삭제
         await mydb.collection('post').deleteOne({ _id: new objId(postId) }); // ObjectId 생성자 호출 수정
-        res.status(200).send('게시물이 성공적으로 삭제되었습니다.');
+        res.redirect('/main');
     } catch (err) {
         console.log('Failed to delete post:', err);
-        res.status(500).send('게시물 삭제에 실패했습니다.');
     }
 });
 
