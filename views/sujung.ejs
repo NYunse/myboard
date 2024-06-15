@@ -36,12 +36,10 @@
 
     <script>
         document.getElementById('editPostForm').addEventListener('submit', function(event) {
-            // 여기서 필요한 유효성 검사를 수행할 수 있습니다.
+            //글 유효성 검사 (수정 시 제목이 없으면 작성 불가)
             const title = document.getElementById('title').value;
-            const caption = document.getElementById('caption').value;
-
-            if (!title || !caption) {
-                alert('Title and Caption are required.');
+            if (!title) {
+                alert('제목을 입력하세요!!');
                 event.preventDefault(); // 폼 제출을 막습니다.
             }
         });
